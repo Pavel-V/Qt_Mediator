@@ -27,12 +27,16 @@ int main(int argc, char *argv[])
     QObject::connect(&w1, &Widget::play_button_clicked,     &Mediator::get_instance(), &Mediator::play);
     QObject::connect(&w1, &Widget::pause_button_clicked,    &Mediator::get_instance(), &Mediator::pause);
     QObject::connect(&w1, &Widget::stop_button_clicked,     &Mediator::get_instance(), &Mediator::stop);
+    QObject::connect(&w1, &Widget::speed_down_requested,    &Mediator::get_instance(), &Mediator::speed_down);
+    QObject::connect(&w1, &Widget::speed_up_requested,      &Mediator::get_instance(), &Mediator::speed_up);
     QObject::connect(&w1, &Widget::closed,                  &Mediator::get_instance(), &Mediator::widget_close);
 
     QObject::connect(&w2, &Widget::slider_value_changed,    &Mediator::get_instance(), &Mediator::change_slider_value);
     QObject::connect(&w2, &Widget::play_button_clicked,     &Mediator::get_instance(), &Mediator::play);
     QObject::connect(&w2, &Widget::pause_button_clicked,    &Mediator::get_instance(), &Mediator::pause);
     QObject::connect(&w2, &Widget::stop_button_clicked,     &Mediator::get_instance(), &Mediator::stop);
+    QObject::connect(&w2, &Widget::speed_down_requested,    &Mediator::get_instance(), &Mediator::speed_down);
+    QObject::connect(&w2, &Widget::speed_up_requested,      &Mediator::get_instance(), &Mediator::speed_up);
     QObject::connect(&w2, &Widget::closed,                  &Mediator::get_instance(), &Mediator::widget_close);
 
     QObject::connect(&player, &Player::next_step_got,       &Mediator::get_instance(), &Mediator::change_slider_value);

@@ -2,7 +2,9 @@
 #include <thread>
 #include <QDebug>
 #include <QApplication>
+#include <QDateTime>
 #include "mediator.h"
+#include "speed_convertor.h"
 
 Player::Player(QObject *parent) :
     QObject(parent)
@@ -10,6 +12,8 @@ Player::Player(QObject *parent) :
     m_value = 0;
     m_is_running = false;
     m_is_proc_loop_started = true;
+    m_interval_init = 1000; // 1000 ms
+    m_interval = m_interval_init;
 }
 
 void Player::run()
@@ -18,24 +22,30 @@ void Player::run()
     {
         if (m_is_running)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-            if (m_is_running)
+            if (m_is_running) // пока спали, is_running могло стать false
             {
-                ++m_value;
+                uint64_t timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
+                int delta_time = timestamp - m_timestamp_last_change;
 
-                if (m_value <= Mediator::get_max_value())
+                if (delta_time >= m_interval)
                 {
-                    emit next_step_got(m_value);
-                }
-                else
-                {
-                    m_value = 0;
-                    m_is_running = false;
-                    emit ended();
-                }
+                    m_timestamp_last_change = timestamp - (delta_time % m_interval);
 
-                qDebug() << "!!!" << m_value;
+                    ++m_value;
+                    if (m_value <= Mediator::get_max_value())
+                    {
+                        emit next_step_got(m_value);
+                    }
+                    else
+                    {
+                        m_value = 0;
+                        m_is_running = false;
+                        emit ended();
+                    }
+                }
+                //qDebug() << "!!!" << m_value;
             }
         }
         else
@@ -66,6 +76,7 @@ void Player::value_change(int value)
     }
 
     m_value = value;
+    m_timestamp_last_change = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
     if (was_running)
     {
@@ -76,6 +87,7 @@ void Player::value_change(int value)
 void Player::play()
 {
     m_is_running = true;
+    m_timestamp_last_change = QDateTime::currentDateTime().toMSecsSinceEpoch();
 }
 
 void Player::pause()
@@ -92,4 +104,9 @@ void Player::stop()
 void Player::release()
 {
     m_is_proc_loop_started = false;
+}
+
+void Player::change_speed(int speed)
+{
+    m_interval = m_interval_init * SPEED_INTERVAL_COEFS[speed];
 }

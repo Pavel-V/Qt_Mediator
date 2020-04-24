@@ -20,4 +20,5 @@ SOURCES += main.cpp\
 
 HEADERS  += widget.h \
     mediator.h \
-    player.h
+    player.h \
+    speed_convertor.h

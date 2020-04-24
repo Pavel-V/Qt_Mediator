@@ -20,19 +20,17 @@ public:
     void set_widgets(Widget* w1, Widget* w2) noexcept;
     void set_player(Player* player) noexcept;
 
-signals:
-    void slider_changed(int value);
-    void value_changed(int value);
-    void played();
-    void paused();
-    void stopped();
-
 public slots:
     void change_slider_value(int value);
     void play();
     void pause();
     void stop();
     void widget_close();
+    void speed_up();
+    void speed_down();
+
+protected:
+    void change_speed();
 
 private:
     explicit Mediator(QObject* parent = nullptr);
@@ -47,6 +45,7 @@ private:
     int m_count_active_widgets;
 
     int m_slider_value;
+    int m_speed_value;
     bool m_is_playing;
 };
 
