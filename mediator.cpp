@@ -2,6 +2,7 @@
 #include "player.h"
 #include "widget.h"
 #include "speed_convertor.h"
+#include <thread>
 #include <QDebug>
 
 #define MAX_VALUE 100
@@ -32,6 +33,22 @@ void Mediator::set_player(Player* player) noexcept
     m_ptr_player = player;
 }
 
+void Mediator::mutex_lock() noexcept
+{
+    m_mutex.lock();
+}
+
+bool Mediator::mutex_try_lock() noexcept
+{
+    qDebug() << "!?";
+    return m_mutex.try_lock();
+}
+
+void Mediator::mutex_unlock() noexcept
+{
+    m_mutex.unlock();
+}
+
 void Mediator::change_slider_value(int value)
 {
     //qDebug() << "Mediator::change_slider_value" << value << m_slider_value << sender()->objectName();
@@ -43,9 +60,16 @@ void Mediator::change_slider_value(int value)
 
     m_slider_value = value;
 
+    m_mutex.lock();
+
+    m_ptr_player->value_change(m_slider_value);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+
     m_ptr_widget_1->change_slider_value(m_slider_value);
     m_ptr_widget_2->change_slider_value(m_slider_value);
-    m_ptr_player->value_change(m_slider_value);
+
+    m_mutex.unlock();
 }
 
 void Mediator::play()

@@ -31,12 +31,23 @@ void Player::run()
 
                 if (delta_time >= m_interval)
                 {
+                    int skip = delta_time / m_interval;
+
                     m_timestamp_last_change = timestamp - (delta_time % m_interval);
 
-                    ++m_value;
+                    m_value += skip;
                     if (m_value <= Mediator::get_max_value())
                     {
-                        emit next_step_got(m_value);
+                        if (Mediator::get_instance().mutex_try_lock())
+                        {
+                            qDebug() << "update" << m_value;
+                            emit next_step_got(m_value);
+                            Mediator::get_instance().mutex_unlock();
+                        }
+                        else
+                        {
+                            qDebug() << "skip" << m_value;
+                        }
                     }
                     else
                     {
