@@ -50,8 +50,8 @@ void Widget::create_widgets() noexcept
 
     QObject::connect(m_slider, &QSlider::valueChanged, [this](int value)
     {
-        qDebug() << "!!!!!" << value;
-        m_label_value->setText(QString::number(value));
+        //qDebug() << "!!!!!" << value;
+        m_label_value->setText(QString::number(value / 1000.0));
         emit slider_value_changed(value);
     });
 
@@ -97,12 +97,12 @@ void Widget::change_slider_value(int value)
     m_slider->disconnect();
 
     m_slider->setValue(value);
-    m_label_value->setText(QString::number(value));
+    m_label_value->setText(QString::number(value / 1000.0));
 
     QObject::connect(m_slider, &QSlider::valueChanged, [this](int value)
     {
-        qDebug() << "!!!!!" << value;
-        m_label_value->setText(QString::number(value));
+        //qDebug() << "!!!!!" << value;
+        m_label_value->setText(QString::number(value / 1000.0));
         emit slider_value_changed(value);
     });
 

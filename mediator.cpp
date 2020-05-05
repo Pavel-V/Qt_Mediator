@@ -5,7 +5,7 @@
 #include <thread>
 #include <QDebug>
 
-#define MAX_VALUE 100
+#define MAX_VALUE 100000
 
 Mediator::Mediator(QObject *parent) :
     QObject(parent)
@@ -40,7 +40,7 @@ void Mediator::mutex_lock() noexcept
 
 bool Mediator::mutex_try_lock() noexcept
 {
-    qDebug() << "!?";
+    //qDebug() << "!?";
     return m_mutex.try_lock();
 }
 
@@ -64,7 +64,7 @@ void Mediator::change_slider_value(int value)
 
     m_ptr_player->value_change(m_slider_value);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     m_ptr_widget_1->change_slider_value(m_slider_value);
     m_ptr_widget_2->change_slider_value(m_slider_value);

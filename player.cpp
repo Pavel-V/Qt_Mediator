@@ -12,7 +12,7 @@ Player::Player(QObject *parent) :
     m_value = 0;
     m_is_running = false;
     m_is_proc_loop_started = true;
-    m_interval_init = 1000; // 1000 ms
+    m_interval_init = 17; // 1000 ms
     m_interval = m_interval_init;
 }
 
@@ -22,7 +22,7 @@ void Player::run()
     {
         if (m_is_running)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            std::this_thread::sleep_for(std::chrono::milliseconds(3));
 
             if (m_is_running) // пока спали, is_running могло стать false
             {
@@ -35,12 +35,12 @@ void Player::run()
 
                     m_timestamp_last_change = timestamp - (delta_time % m_interval);
 
-                    m_value += skip;
+                    m_value += skip * m_interval_init;
                     if (m_value <= Mediator::get_max_value())
                     {
                         if (Mediator::get_instance().mutex_try_lock())
                         {
-                            qDebug() << "update" << m_value;
+                            //qDebug() << "update" << m_value;
                             emit next_step_got(m_value);
                             Mediator::get_instance().mutex_unlock();
                         }
